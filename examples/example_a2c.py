@@ -217,7 +217,7 @@ class FrameStack(gym.Wrapper):
 
 NUMBER_ENVIRONMENTS = 32
 pool = ThreadPool(NUMBER_ENVIRONMENTS)
-envs = [Environment("127.0.0.1", i) for i in range(5000, 5000 + NUMBER_ENVIRONMENTS)]
+envs = [Environment("ipc", "/tmp/zerogym", i) for i in range(5000, 5000 + NUMBER_ENVIRONMENTS)]
 envs = [FrameStack(FireResetEnv(env), 4) for env in envs]
 # env.seed(SEED)
 state_size = [1, 4, 80, 70]

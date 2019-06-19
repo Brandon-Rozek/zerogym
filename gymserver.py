@@ -129,15 +129,25 @@ def respond(msg, env, socket):
 #
 
 # [TODO] Make sure port is an int
-if len(sys.argv) != 2:
-    print("Usage: gymserver_zero.py <port>", file=sys.stderr)
+if len(sys.argv) != 3:
+    print("Usage: gymserver_zero.py <proto> <port>", file=sys.stderr)
+    print("Where proto equals tcp or ipc", file=sys.stderr)
     sys.exit(1)
 
 env = PongEnv()
-port = int(sys.argv[1])
+port = int(sys.argv[2])
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-socket.bind("tcp://*:%s" % port)
+
+proto = sys.argv[1]
+if proto == "tcp":
+    socket.bind("tcp://*:%s" % port)
+elif proto == "ipc":
+    socket.bind("ipc:///tmp/zerogym:%s" % port)
+else:
+    print("proto not recognized", file=sys.stderr)
+    sys.exit(1)
+
 while True:
     msg = socket.recv_json()
     respond(msg, env, socket)

@@ -4,10 +4,12 @@ import numpy
 
 # [TODO] Error handling for if server is down
 class Environment:
-    def __init__(self, address, port):
+    def __init__(self, proto, address, port):
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.REQ)
-        self.socket.connect("tcp://%s:%s" % (address, port))
+        if proto != "tcp" and proto != "ipc":
+            raise ValueError("proto must be tcp or ipc")
+        self.socket.connect("%s://%s:%s" % (proto, address, port))
         self.address = address
         self.port = port
         self.observation_space, self.action_space, self.reward_range, self.metadata, self.action_meanings = self.get_initial_metadata()    
